@@ -1,0 +1,16 @@
+node_modules/
+
+# Python virtual environments
+backend/venv/
+
+# Django / backend environment files with secrets (API keys, DB passwords, etc.)
+backend/assistant/.env
+backend/.env
+
+# Frontend environment files (API URLs, public config)
+frontend-next/.env
+frontend-next/.env.local
+frontend-next/.env.*.local
+
+# Next.js build output
+frontend-next/.next/
