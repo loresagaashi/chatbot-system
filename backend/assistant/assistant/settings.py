@@ -61,16 +61,20 @@ OPENAI_API_KEY = get_env_setting("OPENAI_API_KEY", default=None, required=False)
 
 # Application definition
 
+# Application definition
+
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'rest_framework',
-    'corsheaders',
-    'api',
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "django.contrib.postgres",
+    "pgvector.django",
+    "rest_framework",
+    "corsheaders",
+    "api.apps.ApiConfig",
 ]
 
 MIDDLEWARE = [
@@ -107,10 +111,23 @@ WSGI_APPLICATION = 'assistant.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+# Database
+# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
+#
+# Configure PostgreSQL via environment variables:
+#   POSTGRES_DB
+#   POSTGRES_USER
+#   POSTGRES_PASSWORD
+#   POSTGRES_HOST  (default: localhost)
+#   POSTGRES_PORT  (default: 5432)
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": get_env_setting("POSTGRES_DB", "assistant"),
+        "USER": get_env_setting("POSTGRES_USER", "assistant"),
+        "PASSWORD": get_env_setting("POSTGRES_PASSWORD", ""),
+        "HOST": get_env_setting("POSTGRES_HOST", "localhost"),
+        "PORT": get_env_setting("POSTGRES_PORT", "5432"),
     }
 }
 
@@ -148,10 +165,21 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = "static/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Embedding configuration (used by the memory/embedding utilities)
+EMBEDDING_MODEL_NAME = get_env_setting(
+    "EMBEDDING_MODEL_NAME", "text-embedding-3-small"
+)
+EMBEDDING_DIMENSIONS = int(get_env_setting("EMBEDDING_DIMENSIONS", "1536"))
+
+# Chat model configuration (used by the OpenAI chat completion calls)
+CHAT_MODEL_NAME = get_env_setting("CHAT_MODEL_NAME", "gpt-4o-mini")

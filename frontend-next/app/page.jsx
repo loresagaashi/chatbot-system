@@ -20,6 +20,34 @@ export default function HomePage() {
 
   const historyRef = useRef(null);
 
+  async function handleCreateNewChat() {
+    try {
+      setError("");
+      const res = await fetch(`${API_BASE_URL}/sessions/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({})
+      });
+
+      if (!res.ok) {
+        const errText = await res.text();
+        throw new Error(
+          `Failed to create session: ${res.status} ${res.statusText} - ${errText}`
+        );
+      }
+
+      const created = await res.json();
+      setActiveSessionId(created.id);
+      setSessions((prev) => [created, ...prev]);
+      setHistory([]);
+      setChatInput("");
+    } catch (err) {
+      setError(err.message || "Failed to create new chat");
+    }
+  }
+
   async function fetchSessions() {
     try {
       const res = await fetch(`${API_BASE_URL}/sessions/`);
@@ -255,14 +283,39 @@ export default function HomePage() {
           backgroundColor: "#f9fafb"
         }}
       >
-        <h2
+        <div
           style={{
-            fontSize: "1rem",
-            margin: "0 0 0.75rem 0"
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: "0.5rem",
+            marginBottom: "0.75rem"
           }}
         >
-          History
-        </h2>
+          <h2
+            style={{
+              fontSize: "1rem",
+              margin: 0
+            }}
+          >
+            History
+          </h2>
+          <button
+            type="button"
+            onClick={handleCreateNewChat}
+            style={{
+              borderRadius: "9999px",
+              border: "1px solid #d4d4d8",
+              backgroundColor: "white",
+              padding: "0.2rem 0.6rem",
+              fontSize: "0.75rem",
+              cursor: "pointer",
+              color: "#111827"
+            }}
+          >
+            + New
+          </button>
+        </div>
         <div
           style={{
             fontSize: "0.8rem",
